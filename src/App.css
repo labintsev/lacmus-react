@@ -1,0 +1,55 @@
+body, html {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.maincontainer {
+  height: 100%;
+}
+
+.left-panel {
+  max-width: 200;
+  padding: 8;
+  height: 100%;
+}
+
+.right-panel {
+  padding: 8;
+  height: 900;
+}
+
+.center {
+  display: block;
+  margin: 10 auto 10 auto;
+}
+
+li img {
+  padding: 4;
+  height: 64px;
+  width: 128px;
+  order: 1;
+}
+
+li {
+  float: left;
+  list-style-type: none;
+}
+
+ol {
+  padding-left: 8;
+}
+
+input[type="range"] {
+  width: 400px;
+  margin: 0;
+  padding: 8;
+}
+
+.preview {
+  height: 90%;
+  max-height: 800;
+  overflow: scroll;
+}
