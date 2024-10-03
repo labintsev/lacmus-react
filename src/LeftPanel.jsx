@@ -25,28 +25,37 @@ function PredictButton(){
 
 
 function ImagePreview(props){
+
+  function onClick(){
+    props.setImageSrc(URL.createObjectURL(props.src))
+  }
     return (
         <img 
             src={URL.createObjectURL(props.src)}
             width={32}
             height={32}
+            onClick={onClick}
         />
     )
 }
 
 
-function LeftPanel() {
+function LeftPanel({setImageSrc}) {
     const [files, setFiles] = useState([]);
 
     const renderFileList = () => (
         <ul>
           {[...files].map(f => (
             <li key={f.name}>
-              <ImagePreview src={f} />
+              <ImagePreview 
+                src={f}
+                setImageSrc={setImageSrc} />
             </li>
           ))}
         </ul>
       )
+    
+
 
     return (
       <div className="pure-u-1-5 left-panel center">
