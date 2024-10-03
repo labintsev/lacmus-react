@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 import './App.css'
 import LeftPanel from './LeftPanel'
 import RightPanel from './RightPanel'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const Context = useContext([])
 
   return (
     <>

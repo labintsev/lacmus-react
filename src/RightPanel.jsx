@@ -17,11 +17,17 @@ function CanvasComponent({imageSrc}) {
         }; 
     }, []); 
     
-    return <canvas ref={canvasRef} />;
+    return (
+    <div>
+        <canvas ref={canvasRef} />
+    </div>
+    );
 };
+
 
 function TresholdComponent(){
     return (
+        <div className='treshold-container'>
         <label>
         Treshold:
         <input
@@ -31,6 +37,7 @@ function TresholdComponent(){
             max="99"
             width="600"/>
         </label>
+        </div>
     )
 }
 

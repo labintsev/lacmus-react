@@ -17,8 +17,9 @@ body, html {
 }
 
 .right-panel {
+  display: block;
   padding: 8;
-  height: 900;
+  height: 100%;
 }
 
 .center {
@@ -52,4 +53,9 @@ input[type="range"] {
   height: 90%;
   max-height: 800;
   overflow: scroll;
+}
+
+.treshold-container{
+  position: absolute;
+  bottom: 16px;
 }
