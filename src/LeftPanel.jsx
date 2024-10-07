@@ -1,29 +1,5 @@
 import { useState } from 'react'
 
-function OpenButton(){
-    return (
-        <div className="btn-container">
-            <label className="pure-button center" htmlFor="image_uploads">Open</label>
-            <input 
-                type="file"
-                id="image_uploads"
-                name="image_uploads"
-                accept="image/*"
-                multiple/>
-        </div>
-    )
-}
-
-
-function PredictButton(){
-  return (
-    <div className="btn-container">
-      <div className="pure-button center">Predict all</div>
-    </div>
-  )
-}
-
-
 function ImagePreview(props){
 
   function onClick(){
@@ -44,6 +20,7 @@ function LeftPanel({setImageSrc}) {
     const [files, setFiles] = useState([]);
 
     const renderFileList = () => (
+        <div className='image-list'>
         <ul>
           {[...files].map(f => (
             <li key={f.name}>
@@ -53,20 +30,21 @@ function LeftPanel({setImageSrc}) {
             </li>
           ))}
         </ul>
+        </div>
+
       )
     
-
-
     return (
-      <div className="pure-u-1-5 left-panel center">
-        <PredictButton />
+      <div className="left-panel">
+
+        <button>predict all</button>
 
         {renderFileList()}
 
         <input type="file" 
-        accept="image/*" 
-        multiple 
-        onChange={(e) => setFiles(e.target.files)} />
+          accept="image/*" 
+          multiple 
+          onChange={(e) => setFiles(e.target.files)} />
         
       </div>
     );

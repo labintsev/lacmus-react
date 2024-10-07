@@ -1,25 +1,11 @@
 import React, { useEffect, useRef } from 'react'; 
+import { Image, Stage, Layer } from 'react-konva';
+import useImage from 'use-image';
 
-function CanvasComponent({imageSrc}) { 
-    const canvasRef = useRef(null); 
 
-    useEffect(() => { 
-        const canvas = canvasRef.current; 
-        const canvasContext = canvas.getContext('2d'); 
-        const image = new Image(); 
-        const handleImageLoad = () => { 
-            canvasContext.drawImage(image, 0, 0); // Draw the image at position (0, 0) on the canvas 
-        }; 
-        
-        image.addEventListener('load', handleImageLoad); 
-        image.src = imageSrc; // Set the image source 
-    }, [imageSrc]); 
-
-    return (
-    <div>
-        <canvas ref={canvasRef} width={800} height={600}/>
-    </div>
-    );
+const FullImage = (props) => {
+  const [img] = useImage(props.imageSrc);
+  return <Image image={img} />;
 };
 
 
@@ -42,7 +28,11 @@ function TresholdComponent(){
 function RightPanel({imageSrc}) {
     return (
       <div className="pure-u-4-5 right-panel">
-        <CanvasComponent imageSrc={imageSrc}/>
+        <Stage width={6000} height={4000}>
+        <Layer>
+          <FullImage imageSrc={imageSrc}/>
+        </Layer>
+      </Stage>
         <TresholdComponent/>
       </div>
     );

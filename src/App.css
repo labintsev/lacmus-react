@@ -2,45 +2,40 @@ body, html {
   height: 100%;
 }
 
-#root {
-  height: 100%;
+.maincontainer {
+  height: 100vh;
 }
 
-.maincontainer {
-  height: 100%;
+.image-list{
+  height: 80vh;
+  overflow-y: scroll;
+}
+
+.image-list ul {
+  padding-inline-start: 1em;
 }
 
 .left-panel {
-  max-width: 200;
-  padding: 8;
-  height: 100%;
+  width: 12vw;
 }
 
 .right-panel {
+  width: 84vw;
   display: block;
   padding: 8;
-  height: 100%;
-}
-
-.center {
-  display: block;
-  margin: 10 auto 10 auto;
+  height: 100vh;
 }
 
 li img {
+  display: block;
+  width: 100%;
+  height: auto;
   padding: 4;
-  height: 64px;
-  width: 128px;
-  order: 1;
 }
 
 li {
   float: left;
   list-style-type: none;
-}
-
-ol {
-  padding-left: 8;
 }
 
 input[type="range"] {
@@ -49,10 +44,9 @@ input[type="range"] {
   padding: 8;
 }
 
-.preview {
-  height: 90%;
-  max-height: 800;
-  overflow: scroll;
+.main-canvas{
+  height: 99vh;
+  width: 84vw;
 }
 
 .treshold-container{
