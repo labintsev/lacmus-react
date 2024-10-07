@@ -9,8 +9,11 @@ function App() {
   return (
     <>
       <div className='pure-g maincontainer'>
-        <LeftPanel setImageSrc={setImageSrc}/>
-        <RightPanel imageSrc={imageSrc} />
+        <LeftPanel 
+          imageSrc={imageSrc}
+          setImageSrc={setImageSrc}/>
+        <RightPanel 
+          imageSrc={imageSrc} />
       </div>
     </>
   )
