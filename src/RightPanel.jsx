@@ -8,7 +8,7 @@ const boxes = [
 ]
 
 const FullImage = (props) => {
-  const [img] = useImage(props.imageSrc);
+  const [img] = useImage(props.imageUrl);
   return <Image image={img} />;
 };
 
@@ -31,14 +31,14 @@ const BoundingBoxes = (props) => {
   )
 }
 
-function RightPanel({ imageSrc }) {
+function RightPanel({ imageFile }) {
   const [thresh, setThresh] = useState(0.5)
 
-  const predictImage = () => {
-    console.log(imageSrc)
+  const predictByForm = () => {
+    const endpoint = `http://127.0.0.1:5000/`
     const form = new FormData();
-    form.append('filename', imageSrc);
-    const { data } = axios.post('http://127.0.0.1:8000/tmp', form).then(
+    form.append('image_file', imageFile)
+    const { promise } = axios.post(endpoint, form).then(
       response => { console.log('data', response); }
     )
   }
@@ -51,7 +51,7 @@ function RightPanel({ imageSrc }) {
     <div className="pure-u-4-5 right-panel">
       <Stage width={6000} height={4000}>
         <Layer>
-          <FullImage imageSrc={imageSrc} />
+          {imageFile ? (<FullImage imageUrl={URL.createObjectURL(imageFile)} />) : null } 
         </Layer>
         <Layer>
           <BoundingBoxes thresh={thresh} />
@@ -59,7 +59,7 @@ function RightPanel({ imageSrc }) {
       </Stage>
 
       <div className='treshold-container'>
-        <button onClick={predictImage}>Predict</button>
+        <button onClick={predictByForm}>Predict</button>
         <label>
           <input
             className="pure-form"

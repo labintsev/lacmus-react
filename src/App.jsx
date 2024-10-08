@@ -4,16 +4,15 @@ import LeftPanel from './LeftPanel'
 import RightPanel from './RightPanel'
 
 function App() {
-  const [imageSrc, setImageSrc] = useState('');
+  const [imageFile, setImageFile] = useState(null);
 
   return (
     <>
       <div className='pure-g maincontainer'>
         <LeftPanel 
-          imageSrc={imageSrc}
-          setImageSrc={setImageSrc}/>
+          setImageFile={setImageFile}/>
         <RightPanel 
-          imageSrc={imageSrc} />
+          imageFile={imageFile} />
       </div>
     </>
   )

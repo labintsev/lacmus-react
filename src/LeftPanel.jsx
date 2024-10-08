@@ -3,11 +3,12 @@ import { useState } from 'react'
 function ImagePreview(props) {
 
   function onClick() {
-    props.setImageSrc(URL.createObjectURL(props.src))
+    props.setImageFile(props.imgFile)
+    console.log(props.imgFile)
   }
   return (
     <img
-      src={URL.createObjectURL(props.src)}
+      src={URL.createObjectURL(props.imgFile)}
       width={32}
       height={32}
       onClick={onClick}
@@ -16,17 +17,17 @@ function ImagePreview(props) {
 }
 
 
-function LeftPanel({ setImageSrc }) {
-  const [files, setFiles] = useState([]);
+function LeftPanel({ setImageFile }) {
+  const [imgList, setImgList] = useState([]);
 
   const renderFileList = () => (
     <div className='image-list'>
       <ul>
-        {[...files].map(f => (
-          <li key={f.name}>
+        {[...imgList].map(imgFile => (
+          <li key={imgFile.name}>
             <ImagePreview
-              src={f}
-              setImageSrc={setImageSrc} />
+              imgFile={imgFile}
+              setImageFile={setImageFile} />
           </li>
         ))}
       </ul>
@@ -42,7 +43,7 @@ function LeftPanel({ setImageSrc }) {
       <input type="file"
         accept="image/*"
         multiple
-        onChange={(e) => setFiles(e.target.files)} />
+        onChange={(e) => setImgList(e.target.files)} />
 
     </div>
   );
