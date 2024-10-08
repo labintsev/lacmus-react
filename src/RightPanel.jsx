@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Rect, Image, Stage, Layer } from 'react-konva';
 import useImage from 'use-image';
 import axios from 'axios';
 
 const boxes = [
-  { 'x': 100, 'y': 100, 'w': 50, 'h': 50 }
+  { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 'p': 0.5 }
 ]
 
 const FullImage = (props) => {
@@ -15,46 +15,38 @@ const FullImage = (props) => {
 const BoundingBoxes = (props) => {
   return (
     <>
-      {boxes.map((b) => (
-        <Rect
-          x={b.x}
-          y={b.y}
-          width={b.w}
-          height={b.h}
-          stroke={"red"}
-        />)
-      )}
+      {[...boxes]
+        .filter((b) => { return b.p > props.thresh })
+        .map(
+          (b) => (
+            <Rect
+              x={b.x}
+              y={b.y}
+              width={b.w}
+              height={b.h}
+              stroke={"red"} />
+          )
+        )}
     </>
   )
 }
 
-function TresholdComponent({imageSrc}) {
+function RightPanel({ imageSrc }) {
+  const [thresh, setThresh] = useState(0.5)
 
   const predictImage = () => {
     console.log(imageSrc)
     const form = new FormData();
     form.append('filename', imageSrc);
-    const {data} = axios.post('http://127.0.0.1:8000/tmp', form).then(
+    const { data } = axios.post('http://127.0.0.1:8000/tmp', form).then(
       response => { console.log('data', response); }
     )
   }
 
-  return (
-    <div className='treshold-container'>
-      <button onClick={predictImage}>Predict</button>
-      <label>
-        <input
-          className="pure-form"
-          type="range"
-          min="1"
-          max="99"
-          width="600" />
-      </label>
-    </div>
-  )
-}
+  const changeThresh = (e) => {
+    setThresh(e.target.value / 100)
+  }
 
-function RightPanel({ imageSrc }) {
   return (
     <div className="pure-u-4-5 right-panel">
       <Stage width={6000} height={4000}>
@@ -62,10 +54,22 @@ function RightPanel({ imageSrc }) {
           <FullImage imageSrc={imageSrc} />
         </Layer>
         <Layer>
-          <BoundingBoxes />
+          <BoundingBoxes thresh={thresh} />
         </Layer>
       </Stage>
-      <TresholdComponent imageSrc={imageSrc} />
+
+      <div className='treshold-container'>
+        <button onClick={predictImage}>Predict</button>
+        <label>
+          <input
+            className="pure-form"
+            type="range"
+            min="1"
+            max="99"
+            width="600"
+            onChange={changeThresh} />
+        </label>
+      </div>
     </div>
   );
 }
