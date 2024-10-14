@@ -38,13 +38,12 @@ function LeftPanel({ setImageFile }) {
   return (
     <div className="left-panel">
 
-      {renderFileList()}
-
       <input type="file"
         accept="image/*"
         multiple
         onChange={(e) => setImgList(e.target.files)} />
-
+      
+      {renderFileList()}
     </div>
   );
 }

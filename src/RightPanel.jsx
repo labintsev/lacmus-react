@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Rect, Image, Stage, Layer } from 'react-konva';
 import useImage from 'use-image';
 import axios from 'axios';
@@ -9,7 +9,54 @@ const stub_boxes = [
 
 const FullImage = (props) => {
   const [img] = useImage(props.imageUrl);
-  return <Image image={img} />;
+  const [scale, setScale] = useState(1);
+  const [x0, setX0] = useState(0);
+  const [y0, setY0] = useState(0);
+  const [move, setMove] = useState(false);
+
+
+  function onWheel(e){
+    const dy = e.evt.deltaY;
+    const new_scale = scale - (dy / 1380);
+    if(new_scale>0.1){
+      setScale(new_scale);
+    }
+  }
+
+  function moveAt(pageX, pageY) {
+    if (x0 >= 0) { setX0(pageX) }
+    if (y0 >= 0) { setY0(pageY) }
+    console.log('x0=', x0, 'y0=', y0, 'move: ', move)
+  }
+
+  function onMouseMove(evt) {
+    console.log('onMouseMove', evt)
+    moveAt(evt.pageX, evt.pageY); 
+  }
+
+  function onMouseDown({evt}){
+    console.log('onMouseDown', evt)
+    this.on('mousemove', onMouseMove);
+    setMove(true);
+    console.log(move)
+  }
+
+  function onMouseUp({evt}){
+    console.log('onMouseUp', evt)
+    this.off('mousemove', onMouseMove)
+    setMove(false);
+  }
+  
+  return <Image 
+                image={img}
+                offsetX={x0}
+                offsetY={y0}
+                scaleX={scale}
+                scaleY={scale}
+                onWheel={onWheel}  
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+                />;
 };
 
 const BoundingBoxes = ({boxes, thresh}) => {
@@ -54,7 +101,7 @@ function RightPanel({ imageFile }) {
 
   return (
     <div className="pure-u-4-5 right-panel">
-      <Stage width={6000} height={4000}>
+      <Stage width={window.innerWidth * 0.88} height={window.innerHeight}>
         <Layer>
           {imageFile ? (<FullImage imageUrl={URL.createObjectURL(imageFile)} />) : null } 
         </Layer>
@@ -64,7 +111,7 @@ function RightPanel({ imageFile }) {
       </Stage>
 
       <div className='treshold-container'>
-        <button onClick={predictByForm}>Predict</button>
+        <button onClick={predictByForm} className='predict-button'>Predict</button>
         <label>
           <input
             className="pure-form"
