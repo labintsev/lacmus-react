@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Large Image Viewer</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            cursor: grab;
+        }
+        canvas:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="imageCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const image = new Image();
+        image.src = '1426.jpg'; // Example large image URL
+
+        // Variables for dragging and zooming
+        let scale = 1;
+        let scaleFactor = 1.1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let startX = 0;
+        let startY = 0;
+        let isDragging = false;
+
+        image.onload = () => {
+            drawImage();
+        };
+
+        function drawImage() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Limit translation to stay within the image bounds
+            const maxX = (image.width * scale - canvas.width) / 2;
+            const maxY = (image.height * scale - canvas.height) / 2;
+
+            offsetX = Math.min(maxX, Math.max(-maxX, offsetX));
+            offsetY = Math.min(maxY, Math.max(-maxY, offsetY));
+
+            // Draw the image with scaling and translation
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(scale, scale);
+            ctx.translate(-canvas.width / 2 + offsetX / scale, -canvas.height / 2 + offsetY / scale);
+            ctx.drawImage(image, 0, 0);
+            ctx.restore();
+        }
+
+        // Handle mouse wheel for zooming
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+
+            const mouseX = (e.offsetX - canvas.width / 2) / scale;
+            const mouseY = (e.offsetY - canvas.height / 2) / scale;
+
+            if (e.deltaY < 0) {
+                scale *= scaleFactor;
+            } else {
+                scale /= scaleFactor;
+            }
+
+            // Maintain the position of the mouse during zoom
+            offsetX -= mouseX * (scaleFactor - 1);
+            offsetY -= mouseY * (scaleFactor - 1);
+
+            drawImage();
+        });
+
+        // Handle mouse down for dragging
+        canvas.addEventListener('mousedown', (e) => {
+            startX = e.offsetX - offsetX;
+            startY = e.offsetY - offsetY;
+            isDragging = true;
+        });
+
+        // Handle mouse movement for dragging
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                offsetX = e.offsetX - startX;
+                offsetY = e.offsetY - startY;
+                drawImage();
+            }
+        });
+
+        // Handle mouse up for stopping dragging
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Handle mouse out for stopping dragging
+        canvas.addEventListener('mouseout', () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>
