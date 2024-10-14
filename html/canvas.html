@@ -15,12 +15,19 @@
     </style>
 </head>
 <body>
-    <canvas id="imageCanvas" width="800" height="600"></canvas>
+    <canvas id="imageCanvas" ></canvas>
 
     <script>
         const canvas = document.getElementById('imageCanvas');
-        const ctx = canvas.getContext('2d');
+        const CANVAS_WIDTH = 800;
+        const CANVAS_HEIGHT = 600;
 
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
+        const ctx = canvas.getContext('2d');
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'red';
+        
         const image = new Image();
         image.src = '1426.jpg'; // Example large image URL
 
@@ -32,6 +39,7 @@
         let startX = 0;
         let startY = 0;
         let isDragging = false;
+        let boxes = [[100, 100, 10, 10], [200, 200, 20, 20]]
 
         image.onload = () => {
             drawImage();
@@ -53,7 +61,11 @@
             ctx.scale(scale, scale);
             ctx.translate(-canvas.width / 2 + offsetX / scale, -canvas.height / 2 + offsetY / scale);
             ctx.drawImage(image, 0, 0);
+            for (box of boxes){
+                ctx.strokeRect(...box);
+            }
             ctx.restore();
+
         }
 
         // Handle mouse wheel for zooming
@@ -62,13 +74,12 @@
 
             const mouseX = (e.offsetX - canvas.width / 2) / scale;
             const mouseY = (e.offsetY - canvas.height / 2) / scale;
-
             if (e.deltaY < 0) {
                 scale *= scaleFactor;
             } else {
                 scale /= scaleFactor;
             }
-
+            console.log('scale', scale);
             // Maintain the position of the mouse during zoom
             offsetX -= mouseX * (scaleFactor - 1);
             offsetY -= mouseY * (scaleFactor - 1);
