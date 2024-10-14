@@ -1,95 +1,110 @@
-import React, { useEffect, useState } from 'react';
-import { Rect, Image, Stage, Layer } from 'react-konva';
-import useImage from 'use-image';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
 const stub_boxes = [
   { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 's': 0.5 }
 ]
 
-const FullImage = (props) => {
-  const [img] = useImage(props.imageUrl);
-  const [scale, setScale] = useState(1);
-  const [x0, setX0] = useState(0);
-  const [y0, setY0] = useState(0);
-  const [move, setMove] = useState(false);
+const CanvasImageComponent = ({ imageUrl, thresh }) => {
+  const canvasRef = useRef(null);
+  const [scale, setScale] = useState(1); // Image scale factor
+  const [position, setPosition] = useState({ x: 0, y: 0 }); // Image position
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    context.lineWidth = 5;
+    context.strokeStyle = 'red';
+    const image = new Image();
 
-  function onWheel(e){
-    const dy = e.evt.deltaY;
-    const new_scale = scale - (dy / 1380);
-    if(new_scale>0.1){
-      setScale(new_scale);
-    }
-  }
+    // Redraw the image on the canvas whenever it loads or the state changes
+    const drawImage = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+      context.save();
+      context.translate(position.x, position.y); // Apply the position
+      context.scale(scale, scale); // Apply the scaling
+      context.drawImage(image, 0, 0); // Draw the image
+      for (const box of stub_boxes){
+        if (box.s > thresh){
+          context.strokeRect(box.x, box.y, box.w, box.h);
+        }
+      }
+      context.restore();
+    };
 
-  function moveAt(pageX, pageY) {
-    if (x0 >= 0) { setX0(pageX) }
-    if (y0 >= 0) { setY0(pageY) }
-    console.log('x0=', x0, 'y0=', y0, 'move: ', move)
-  }
+    image.onload = drawImage;
+    image.src = imageUrl;
 
-  function onMouseMove(evt) {
-    console.log('onMouseMove', evt)
-    moveAt(evt.pageX, evt.pageY); 
-  }
+    const handleMouseDown = (e) => {
+      setIsDragging(true);
+      setLastMousePos({ x: e.clientX, y: e.clientY });
+    };
 
-  function onMouseDown({evt}){
-    console.log('onMouseDown', evt)
-    this.on('mousemove', onMouseMove);
-    setMove(true);
-    console.log(move)
-  }
+    const handleMouseMove = (e) => {
+      if (isDragging) {
+        const dx = e.clientX - lastMousePos.x;
+        const dy = e.clientY - lastMousePos.y;
+        setPosition((prevPos) => ({
+          x: prevPos.x + dx,
+          y: prevPos.y + dy,
+        }));
+        setLastMousePos({ x: e.clientX, y: e.clientY });
+      }
+    };
 
-  function onMouseUp({evt}){
-    console.log('onMouseUp', evt)
-    this.off('mousemove', onMouseMove)
-    setMove(false);
-  }
-  
-  return <Image 
-                image={img}
-                offsetX={x0}
-                offsetY={y0}
-                scaleX={scale}
-                scaleY={scale}
-                onWheel={onWheel}  
-                onMouseDown={onMouseDown}
-                onMouseUp={onMouseUp}
-                />;
-};
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
 
-const BoundingBoxes = ({boxes, thresh}) => {
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const scaleFactor = 1.1;
+      if (e.deltaY < 0) {
+        setScale(scale * scaleFactor);
+      } else {
+        setScale(scale / scaleFactor);
+      }
+    };
+
+    // Attach event listeners
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('wheel', handleWheel);
+
+    return () => {
+      // Cleanup event listeners when component unmounts
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('wheel', handleWheel);
+    };
+  }, [imageUrl, position, scale, isDragging, lastMousePos]);
+
   return (
-    <>
-      {[...boxes]
-        .filter((b) => { return b.s > thresh })
-        .map(
-          (b) => (
-            <Rect
-              x={b.x}
-              y={b.y}
-              width={b.w}
-              height={b.h}
-              stroke={"red"} 
-              key={b.s}/>
-          )
-        )}
-    </>
-  )
-}
+    <canvas
+      ref={canvasRef}
+      width={window.innerWidth * 0.86}
+      height={window.innerHeight}
+      style={{ border: '1px solid black' }}
+    />
+  );
+};
 
 function RightPanel({ imageFile }) {
   const [thresh, setThresh] = useState(0.5);
   const [boxes, setBoxes] = useState([]);
+  const imgUrl = imageFile ? URL.createObjectURL(imageFile) : '';
 
   const predictByForm = () => {
     const endpoint = `http://127.0.0.1:5000/`
     const form = new FormData();
     form.append('image_file', imageFile)
     const { promise } = axios.post(endpoint, form).then(
-      response => { 
-        console.log('data', response); 
+      response => {
+        console.log('data', response);
         setBoxes(response['data']);
       }
     )
@@ -101,14 +116,7 @@ function RightPanel({ imageFile }) {
 
   return (
     <div className="pure-u-4-5 right-panel">
-      <Stage width={window.innerWidth * 0.88} height={window.innerHeight}>
-        <Layer>
-          {imageFile ? (<FullImage imageUrl={URL.createObjectURL(imageFile)} />) : null } 
-        </Layer>
-        <Layer>
-          <BoundingBoxes boxes={boxes} thresh={thresh} /> 
-        </Layer>
-      </Stage>
+      <CanvasImageComponent imageUrl={imgUrl} thresh={thresh}/>
 
       <div className='treshold-container'>
         <button onClick={predictByForm} className='predict-button'>Predict</button>
