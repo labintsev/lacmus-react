@@ -9,8 +9,6 @@ function ImagePreview(props) {
   return (
     <img
       src={URL.createObjectURL(props.imgFile)}
-      width={32}
-      height={32}
       onClick={onClick}
     />
   )
@@ -22,15 +20,13 @@ function LeftPanel({ setImageFile }) {
 
   const renderFileList = () => (
     <div className='image-list'>
-      <ul>
+
         {[...imgList].map(imgFile => (
-          <li key={imgFile.name}>
             <ImagePreview
               imgFile={imgFile}
               setImageFile={setImageFile} />
-          </li>
         ))}
-      </ul>
+
     </div>
 
   )

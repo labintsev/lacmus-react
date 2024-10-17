@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-      <div className='pure-g maincontainer'>
+      <div className='maincontainer'>
         <LeftPanel 
           setImageFile={setImageFile}/>
         <RightPanel 

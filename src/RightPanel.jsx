@@ -86,9 +86,7 @@ const CanvasImageComponent = ({ imageUrl, thresh }) => {
   return (
     <canvas
       ref={canvasRef}
-      width={window.innerWidth * 0.86}
-      height={window.innerHeight}
-      style={{ border: '1px solid black' }}
+      className='main-canvas'
     />
   );
 };
@@ -115,14 +113,13 @@ function RightPanel({ imageFile }) {
   }
 
   return (
-    <div className="pure-u-4-5 right-panel">
+    <div className="right-panel">
       <CanvasImageComponent imageUrl={imgUrl} thresh={thresh}/>
 
       <div className='treshold-container'>
         <button onClick={predictByForm} className='predict-button'>Predict</button>
         <label>
           <input
-            className="pure-form"
             type="range"
             min="1"
             max="99"

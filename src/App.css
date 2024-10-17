@@ -4,15 +4,12 @@ body, html {
 
 .maincontainer {
   height: 100vh;
+  display: flex;
 }
 
 .image-list{
   height: 95vh;
   overflow-y: scroll;
-}
-
-.image-list ul {
-  padding-inline-start: 1em;
 }
 
 .left-panel {
@@ -26,11 +23,11 @@ body, html {
   height: 100vh;
 }
 
-li img {
+.image-list img {
   display: block;
   width: 100%;
   height: auto;
-  padding: 4;
+  padding: 0.2em 0.5em 0.2em 0.5em ;
 }
 
 li {
@@ -45,8 +42,10 @@ input[type="range"] {
 }
 
 .main-canvas{
-  height: 99vh;
-  width: 84vw;
+  height: 98vh;
+  width: 86vw;
+  margin: 0.3em;
+  border: 1px solid black;
 }
 
 .treshold-container{
@@ -55,6 +54,6 @@ input[type="range"] {
 }
 
 .predict-button {
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: 1em;
+  margin-right: 1em;
 }
