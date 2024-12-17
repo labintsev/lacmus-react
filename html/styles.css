@@ -1,0 +1,65 @@
+body, html {
+  height: 100%;
+}
+
+.maincontainer {
+  height: 100vh;
+  display: flex;
+}
+
+.image-list{
+  height: 95vh;
+  overflow-y: scroll;
+}
+
+.left-panel {
+  width: 12vw;
+}
+
+
+
+.image-list img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 0.2em 0.5em 0.2em 0.5em ;
+}
+
+.image-list li {
+  float: left;
+  list-style-type: none;
+}
+
+.right-panel {
+  width: 84vw;
+  display: block;
+  padding: 8;
+  height: 100vh;
+}
+
+.right-panel input[type="range"] {
+  width: 400px;
+  margin: 0;
+  padding: 8;
+}
+
+.main-canvas{
+  height: 98vh;
+  width: 86vw;
+  margin: 0.3em;
+  border: 1px solid black;
+}
+
+.treshold-container{
+  position: absolute;
+  bottom: 16px;
+}
+
+.predict-button {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.open-button {
+  margin: 1em;
+}

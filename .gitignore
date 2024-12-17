@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # local pure.css copy
-src/pure.css
+*/pure.css
