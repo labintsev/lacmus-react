@@ -14,6 +14,8 @@ const CanvasImageComponent = ({ imageUrl, thresh }) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    canvas.width = parent.innerWidth;
+    canvas.height = parent.innerHeight;
     const context = canvas.getContext('2d');
     context.lineWidth = 5;
     context.strokeStyle = 'red';
