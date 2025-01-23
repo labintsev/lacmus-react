@@ -25,6 +25,19 @@ const CanvasImageComponent = ({ imageUrl, thresh }) => {
     const drawImage = () => {
       context.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
       context.save();
+    
+      // Calculate the boundaries
+      const imageWidth = image.width * scale;
+      const imageHeight = image.height * scale;
+      const minX = Math.min(0, canvas.width - imageWidth);
+      const minY = Math.min(0, canvas.height - imageHeight);
+      const maxX = Math.max(0, canvas.width - imageWidth);
+      const maxY = Math.max(0, canvas.height - imageHeight);
+    
+      // Adjust the position to stay within boundaries
+      position.x = Math.max(minX, Math.min(position.x, maxX));
+      position.y = Math.max(minY, Math.min(position.y, maxY));
+    
       context.translate(position.x, position.y); // Apply the position
       context.scale(scale, scale); // Apply the scaling
       context.drawImage(image, 0, 0); // Draw the image
