@@ -5,7 +5,7 @@ const stub_boxes = [
   { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 's': 0.5 }
 ]
 
-const CanvasImageComponent = ({ imageUrl, thresh }) => {
+const CanvasImageComponent = ({ imageUrl, thresh, boxes }) => {
   const canvasRef = useRef(null);
   const [scale, setScale] = useState(1); // Image scale factor
   const [position, setPosition] = useState({ x: 0, y: 0 }); // Image position
@@ -41,7 +41,7 @@ const CanvasImageComponent = ({ imageUrl, thresh }) => {
       context.translate(position.x, position.y); // Apply the position
       context.scale(scale, scale); // Apply the scaling
       context.drawImage(image, 0, 0); // Draw the image
-      for (const box of stub_boxes){
+      for (const box of boxes){
         if (box.s > thresh){
           context.strokeRect(box.x, box.y, box.w, box.h);
         }
@@ -108,7 +108,7 @@ const CanvasImageComponent = ({ imageUrl, thresh }) => {
 
 function RightPanel({ imageFile }) {
   const [thresh, setThresh] = useState(0.5);
-  const [boxes, setBoxes] = useState([]);
+  const [boxes, setBoxes] = useState(stub_boxes);
   const imgUrl = imageFile ? URL.createObjectURL(imageFile) : '';
 
   const predictByForm = () => {
@@ -119,8 +119,13 @@ function RightPanel({ imageFile }) {
       response => {
         console.log('data', response);
         setBoxes(response['data']);
-      }
-    )
+      })
+      .catch(error => {
+        console.error('Error during prediction:', error);
+        // Handle the error appropriately here
+        alert('An error occurred during prediction. Using stub boxes.');
+        setBoxes(stub_boxes);
+      });
   }
 
   const changeThresh = (e) => {
@@ -129,7 +134,7 @@ function RightPanel({ imageFile }) {
 
   return (
     <div className="right-panel">
-      <CanvasImageComponent imageUrl={imgUrl} thresh={thresh}/>
+      <CanvasImageComponent imageUrl={imgUrl} thresh={thresh} boxes={boxes}/>
 
       <div className='treshold-container'>
         <button onClick={predictByForm} className='predict-button'>Predict</button>
