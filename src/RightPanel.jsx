@@ -14,7 +14,7 @@ const CanvasImageComponent = ({ imageUrl, thresh }) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = parent.innerWidth;
+    canvas.width = parent.innerWidth * 0.85;
     canvas.height = parent.innerHeight;
     const context = canvas.getContext('2d');
     context.lineWidth = 5;
