@@ -4,6 +4,12 @@ import axios from 'axios';
 const stub_boxes = [
   { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 's': 0.5 }
 ]
+const PREDICT_ENDPOINT = `http://192.168.0.200:5000/predict/v1`;
+const token = 'rknn';
+const request_config = {
+  headers: { Authorization: `Bearer ${token}` }
+};
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 const CanvasImageComponent = ({ imageUrl, thresh, boxes }) => {
   const canvasRef = useRef(null);
@@ -25,7 +31,7 @@ const CanvasImageComponent = ({ imageUrl, thresh, boxes }) => {
     const drawImage = () => {
       context.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
       context.save();
-    
+
       // Calculate the boundaries
       const imageWidth = image.width * scale;
       const imageHeight = image.height * scale;
@@ -33,16 +39,16 @@ const CanvasImageComponent = ({ imageUrl, thresh, boxes }) => {
       const minY = Math.min(0, canvas.height - imageHeight);
       const maxX = Math.max(0, canvas.width - imageWidth);
       const maxY = Math.max(0, canvas.height - imageHeight);
-    
+
       // Adjust the position to stay within boundaries
       position.x = Math.max(minX, Math.min(position.x, maxX));
       position.y = Math.max(minY, Math.min(position.y, maxY));
-    
+
       context.translate(position.x, position.y); // Apply the position
       context.scale(scale, scale); // Apply the scaling
       context.drawImage(image, 0, 0); // Draw the image
-      for (const box of boxes){
-        if (box.s > thresh){
+      for (const box of boxes) {
+        if (box.s > thresh) {
           context.strokeRect(box.x, box.y, box.w, box.h);
         }
       }
@@ -111,15 +117,22 @@ function RightPanel({ imageFile }) {
   const [boxes, setBoxes] = useState(stub_boxes);
   const imgUrl = imageFile ? URL.createObjectURL(imageFile) : '';
 
+  const parseBoxesArray = (data_str) => {
+    console.log("Boxes str: ", data_str['boxes']);
+    // todo return as stub_boxes template
+    return JSON.parse(data_str['boxes']);
+  }
+
   const predictByForm = () => {
-    const endpoint = `http://127.0.0.1:5000/`
     const form = new FormData();
     form.append('image_file', imageFile)
-    const { promise } = axios.post(endpoint, form).then(
-      response => {
-        console.log('data', response);
-        setBoxes(response['data']);
-      })
+    const { promise } = axios.post(
+      PREDICT_ENDPOINT, form, request_config).then(
+        response => {
+          console.log('data', response);
+          const boxes_ = parseBoxesArray(response['data']);
+          setBoxes(boxes_);
+        })
       .catch(error => {
         console.error('Error during prediction:', error);
         // Handle the error appropriately here
@@ -134,7 +147,7 @@ function RightPanel({ imageFile }) {
 
   return (
     <div className="right-panel">
-      <CanvasImageComponent imageUrl={imgUrl} thresh={thresh} boxes={boxes}/>
+      <CanvasImageComponent imageUrl={imgUrl} thresh={thresh} boxes={boxes} />
 
       <div className='treshold-container'>
         <button onClick={predictByForm} className='predict-button'>Predict</button>
