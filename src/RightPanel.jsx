@@ -118,12 +118,30 @@ function RightPanel({ imageFile }) {
   const imgUrl = imageFile ? URL.createObjectURL(imageFile) : '';
 
   const parseBoxesArray = (data_str) => {
-    console.log("Boxes str: ", data_str['boxes']);
-    // todo return as stub_boxes template
-    return JSON.parse(data_str['boxes']);
-  }
+
+    const cleanedStr = data_str['boxes'].replace(/[\[\]]/g, '').trim();
+    const elements = cleanedStr.split(/\s+/);
+
+    const cleanedScores = data_str['scores'].replace(/[\[\]]/g, '').trim();
+    const scoreElements = cleanedScores.split(/\s+/);
+    // Group the elements into arrays of 4 numbers each
+    const boxes = [];
+    for (let i = 0; i < elements.length; i += 4) {
+      const box = elements.slice(i, i + 4).map(Number);
+      boxes.push({
+         x: box[0], 
+         y: box[1], 
+         w: box[2] - box[0], 
+         h: box[3] - box[1], 
+         s: Number(scoreElements[i / 4])
+        });
+    }
+    console.log('boxes: ', boxes);
+    return boxes;
+  };
 
   const predictByForm = () => {
+    setBoxes([]);
     const form = new FormData();
     form.append('image_file', imageFile)
     const { promise } = axios.post(
