@@ -4,7 +4,7 @@ import axios from 'axios';
 const stub_boxes = [
   { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 's': 0.5 }
 ]
-const PREDICT_ENDPOINT = `http://192.168.0.200:5000/predict/v1`;
+const PREDICT_ENDPOINT = `http://127.0.0.1:5000/predict`;
 const token = 'rknn';
 const request_config = {
   headers: { Authorization: `Bearer ${token}` }
