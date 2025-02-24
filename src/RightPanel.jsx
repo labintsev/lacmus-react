@@ -4,12 +4,15 @@ import axios from 'axios';
 const stub_boxes = [
   { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 's': 0.5 }
 ]
-const PREDICT_ENDPOINT = `http://127.0.0.1:5000/predict`;
+// const PREDICT_ENDPOINT = `http://127.0.0.1:5000/predict`;
+const PREDICT_ENDPOINT = `http://192.168.0.200:5000/predict`; // orange pi 5 address
 const token = 'rknn';
 const request_config = {
-  headers: { Authorization: `Bearer ${token}` }
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Access-Control-Allow-Origin': '*'
+  }
 };
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 const CanvasImageComponent = ({ imageUrl, thresh, boxes }) => {
   const canvasRef = useRef(null);
@@ -129,12 +132,12 @@ function RightPanel({ imageFile }) {
     for (let i = 0; i < elements.length; i += 4) {
       const box = elements.slice(i, i + 4).map(Number);
       boxes.push({
-         x: box[0], 
-         y: box[1], 
-         w: box[2] - box[0], 
-         h: box[3] - box[1], 
-         s: Number(scoreElements[i / 4])
-        });
+        x: box[0],
+        y: box[1],
+        w: box[2] - box[0],
+        h: box[3] - box[1],
+        s: Number(scoreElements[i / 4])
+      });
     }
     console.log('boxes: ', boxes);
     return boxes;
