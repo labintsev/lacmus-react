@@ -2,15 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
 const stub_boxes = [
-  { 'x': 100, 'y': 100, 'w': 50, 'h': 50, 's': 0.5 }
+  { 'x': 200, 'y': 100, 'w': 100, 'h': 50, 's': 0.5 }
 ]
-// const PREDICT_ENDPOINT = `http://127.0.0.1:5000/predict`;
-const PREDICT_ENDPOINT = `http://192.168.0.200:5000/predict`; // orange pi 5 address
+const PREDICT_ENDPOINT = `http://127.0.0.1:5000/predict`;
+//const PREDICT_ENDPOINT = `http://192.168.0.200:5000/predict`; // orange pi 5 address
 const token = 'rknn';
 const request_config = {
   headers: {
-    Authorization: `Bearer ${token}`,
-    'Access-Control-Allow-Origin': '*'
+    Authorization: `Bearer ${token}`
   }
 };
 
@@ -117,8 +116,12 @@ const CanvasImageComponent = ({ imageUrl, thresh, boxes }) => {
 
 function RightPanel({ imageFile }) {
   const [thresh, setThresh] = useState(0.5);
-  const [boxes, setBoxes] = useState(stub_boxes);
+  const [boxes, setBoxes] = useState([]);
   const imgUrl = imageFile ? URL.createObjectURL(imageFile) : '';
+  
+  useEffect(() => {
+    setBoxes([]);
+  }, [imageFile]);
 
   const parseBoxesArray = (data_str) => {
 
